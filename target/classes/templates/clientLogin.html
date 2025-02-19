@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #4682b4;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .login-section {
+            padding: 100px 0;
+            text-align: left;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 50px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form h2 {
+            margin-bottom: 30px;
+            font-size: rem;
+            color: #4682b4;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+			position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .form-group label {
+            text-align: left;
+        }
+
+        .form-group input {
+            margin-bottom: 20px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .signup-link a {
+            color: #4682b4;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        
+    </style>
+
+    
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <!-- Replace the existing navbar with this in all files -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Client_360</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-right: 150px;">
+            <ul class="navbar-nav ml-auto">
+                <!-- Login Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLogin" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Login
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownLogin">
+                        <a class="dropdown-item" href="/clientlogin">Client login</a>
+                        <a class="dropdown-item" href="/serviceproviderlogin">Service Provider login</a>
+                        <a class="dropdown-item" href="/adminlogin">Admin login</a>
+                    </div>
+                </li>
+    
+                <!-- Signup Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSignup" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Signup
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownSignup">
+                        <a class="dropdown-item" href="/clientsignup">Client Signup</a>
+                        <a class="dropdown-item" href="/serviceprovidersignup">Service Provider Signup</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="login-section">
+        <div class="container">
+            <div class="login-form">
+                <h2>Client Login</h2>
+                <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+                <form action="/clientlogin" method="post">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                <div class="signup-link">
+                    <p>Don't have an account? <a href="/clientsignup">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

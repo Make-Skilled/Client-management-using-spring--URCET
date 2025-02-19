@@ -1,0 +1,14 @@
+com\example\clients_management\entities\ServiceProviderDetails.class
+com\example\clients_management\service\CartService.class
+com\example\clients_management\repositories\CategoryRepository.class
+com\example\clients_management\entities\CartItem.class
+com\example\clients_management\ClientsManagementApplication.class
+com\example\clients_management\repositories\CartItemRepository.class
+com\example\clients_management\service\EmailService.class
+com\example\clients_management\entities\AdminDetails.class
+com\example\clients_management\repositories\AdminRepository.class
+com\example\clients_management\entities\Bookings.class
+com\example\clients_management\repositories\BookingsRepository.class
+com\example\clients_management\service\BookingService.class
+com\example\clients_management\entities\Category.class
+com\example\clients_management\configuration\SecurityConfig.class

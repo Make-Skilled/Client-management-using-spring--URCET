@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Provider Signup</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #4682b4;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .signup-section {
+            padding: 50px 0;
+            text-align: left;
+        }
+
+        .signup-form {
+            background-color: #fff;
+            padding: 50px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .signup-form h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: #4682b4;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .form-group label {
+            text-align: left;
+        }
+
+        .form-group input, .form-group select {
+            margin-bottom: 20px;
+        }
+
+        .social-service-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6f3ff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Home</a>
+    </nav>
+    
+    <div class="container">
+        <div class="signup-section">
+            <div class="signup-form">
+                <h2>Service Provider Registration</h2>
+                <form action="/serviceprovidersignup" method="post">
+                    <div class="form-group">
+                        <label for="name">Full Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number:</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobile" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location:</label>
+                        <select class="form-control" id="location" name="location" required>
+                            <option value="">Select a location</option>
+                            <option value="Hyderabad">Hyderabad</option>
+                            <option value="Vijayawada">Vijayawada</option>
+                            <option value="Guntur">Guntur</option>
+                            <option value="Gannavaram">Gannavaram</option>
+                            <option value="Visakhapatnam">Visakhapatnam</option>
+                            <option value="Rajahmundry">Rajahmundry</option>
+                            <option value="Tirupati">Tirupati</option>
+                            <option value="Nellore">Nellore</option>
+                            <option value="Kakinada">Kakinada</option>
+                            <option value="Anantapur">Anantapur</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="preferredService">Preferred Service:</label>
+                        <select class="form-control" id="preferredService" name="preferredService" required>
+                            <option value="">Select a service</option>
+                            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
+                        </select>
+                    </div>
+                    <div class="social-service-section">
+                        <div class="form-group">
+                            <label>Would you like to provide social service?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="socialService" id="socialService1" value="1">
+                                <label class="form-check-label" for="socialService1">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="socialService" id="socialService0" value="0" checked>
+                                <label class="form-check-label" for="socialService0">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>Already have an account? <a href="/serviceprovider/login">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

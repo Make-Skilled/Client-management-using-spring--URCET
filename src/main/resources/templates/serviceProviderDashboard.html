@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Managing Multiple Clients - Services</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light pink background */
+        }
+
+        .navbar {
+            background-color: #4682b4; /* Pink color for navbar */
+        }
+        .btn-primary1 {
+            background-color: #4682b4; /* Pink background */
+            border: none; /* Remove border */
+        }
+
+        .btn-primary1:hover {
+            background-color: #4682b4; /* Lighter pink on hover */
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-toggler {
+            border-color: #fff;
+        }
+
+        .hero-section {
+            background-color: #4682b4; /* Lighter pink for hero section */
+            color: #fff;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            margin: 10px 0; /* Reduce vertical margin */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body {
+            min-height: 180px; /* Set a minimum height for card bodies */
+        }
+
+        .footer {
+            background-color: #4682b4; /* Pink color for footer */
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 50px; /* Space from content above */
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .star-rating {
+            color: #ffd700; /* Yellow color for stars */
+            font-size: 2rem; /* Increase star size */
+        }
+        .star-rating span {
+            margin-right: 5px; /* Add spacing between stars */
+        }
+
+        .section-title {
+            color: #4682b4;
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+
+        .add-service-btn {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .services-section {
+            padding: 20px 0;
+        }
+
+        .service-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .service-card h5 {
+            color: #4682b4;
+            margin-bottom: 10px;
+        }
+
+        .service-card .price {
+            font-size: 1.2rem;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/serviceproviderdashboard">Service Provider Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/mybookings">My Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/acceptedbookings">Accepted Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/serviceproviderlogout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div th:if="${successMessage}">
+        <div class="alert alert-success">
+            <p th:text="${successMessage}"></p>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>Your Statistics</h1>
+        <p>The customer rating you gained and number of customers rated you are displayed below.</p>
+    </section>
+
+    <!-- Dynamic Cards Section -->
+    <div class="container mt-5" th:if="${serviceProvider != null}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Rating</h5>
+                        <p class="card-text">
+                            <span th:text="${#numbers.formatDecimal(serviceProvider.avgRating, 3, 3).replaceFirst('^0+(?!$)', '')}">0.000</span> / 5
+                        </p>
+                        <div class="star-rating">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" th:classappend="${i <= serviceProvider.avgRating} ? 'fa fa-star' : 'fa fa-star-o'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Number of Ratings</h5>
+                        <p class="card-text" th:text="${serviceProvider.numberOfRatings}">0</p>
+                        <i class="fa fa-users fa-3x" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">To Improve Your Ratings</h5>
+                        <ul class="text-left">
+                            <li>Be nice with customers</li>
+                            <li>Provide timely services</li>
+                            <li>Ensure quality work</li>
+                            <li>Communicate effectively</li>
+                            <li>Follow up with customers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <h2 class="section-title">Your Services</h2>
+    <div class="add-service-btn">
+        <a href="/addservice" class="btn btn-primary1">
+            <i class="fa fa-plus"></i> Add New Service
+        </a>
+    </div>
+
+    <div class="services-section">
+        <div class="row">
+            <div class="col-md-4" th:each="service : ${services}">
+                <div class="service-card">
+                    <h5 th:text="${service.serviceName}">Service Name</h5>
+                    <p class="price">₹<span th:text="${service.chargePerHour}">0.00</span>/hour</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+    </footer>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

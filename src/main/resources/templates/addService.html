@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Service</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #4682b4;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .login-section {
+            padding: 100px 0;
+            text-align: left;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 50px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: #4682b4;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .form-group label {
+            text-align: left;
+        }
+
+        .form-group input, .form-group select {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/serviceprovider/dashboard">Service Provider Dashboard</a>
+    </nav>
+    
+    <div class="container mt-5">
+        <div class="login-form">
+            <h2>Add New Service</h2>
+            <form action="/addservice" method="post">
+                <div class="form-group">
+                    <label for="serviceName">Service Name:</label>
+                    <input type="text" class="form-control" id="serviceName" name="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label for="chargePerHour">Charge Per Hour:</label>
+                    <input type="number" step="0.01" class="form-control" id="chargePerHour" name="chargePerHour" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoryId">Category:</label>
+                    <select class="form-control" id="categoryId" name="categoryId" required>
+                        <option value="">Select a category</option>
+                        <option th:each="category : ${categories}"
+                                th:value="${category.id}"
+                                th:text="${category.name}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add Service</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

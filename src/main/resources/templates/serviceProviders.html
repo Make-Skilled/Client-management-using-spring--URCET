@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Service Providers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <!-- Add Font Awesome for stars -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* General pink color theme */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            color: #4682b4;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        /* Card Styling */
+        .card {
+            color: #4682b4;
+            width: 100%;
+            max-width: 300px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            color: #4682b4;
+            font-weight: bold;
+        }
+
+        .card-text strong {
+            color: #4682b4;
+        }
+
+        .btn-book {
+            background-color: #4682b4;
+            color: white;
+            margin-top: 15px;
+            text-align: center;
+            display: block;
+            width: 100%;
+            border-radius: 5px;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-book:hover {
+            background-color: #4682b4;
+            color: white;
+            text-decoration: none;
+        }
+		.navbar {
+		    background-color: #4682b4;
+		}
+
+		.navbar-brand {
+		    font-size: 1.5rem;
+		    color: #fff;
+		}
+
+		.nav-link {
+		    color: #fff !important;
+		}
+
+		.navbar-toggler {
+		    border-color: #fff;
+		    
+		}
+		.rating-stars {
+            color: #ffd700;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .empty-star {
+            color: #e4e4e4;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .quantity-selector .btn {
+            padding: 2px 8px;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+    </style>
+</head>
+<body>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark">
+	    <a class="navbar-brand" href="/">Client Dashboard</a>
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+	        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="collapse navbar-collapse" id="navbarNav">
+	        <ul class="navbar-nav ml-auto">
+	            <li class="nav-item">
+	                <a class="nav-link" href="/clientbookings">My bookings</a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="/cart">
+	                    <i class="fa fa-shopping-cart"></i> Cart
+	                </a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="clientlogout">Logout</a>
+	            </li>
+	        </ul>
+	    </div>
+	</nav>
+
+    <div class="container mt-4">
+        <h2 class="text-center">Service Providers</h2>
+        <div class="card-container">
+            <div class="card" th:each="provider : ${serviceProviders}">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${provider.name}">Name</h5>
+                    <!-- Add rating display here -->
+                    <div class="rating-stars">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                            <i class="fas fa-star" 
+                               th:classappend="${i <= provider.avgRating} ? '' : 'empty-star'"></i>
+                        </span>
+                        <span class="rating-text" 
+                              th:text="'(' + ${#numbers.formatDecimal(provider.avgRating, 1, 1)} + ' / ' + ${provider.numberOfRatings} + ' ratings)'">
+                        </span>
+                    </div>
+                    <p class="card-text">
+                        <strong>Mobile:</strong> <span th:text="${provider.mobile}">Mobile</span><br>
+                        <strong>Email:</strong> <span th:text="${provider.email}">Email</span><br>
+                        <strong>Location:</strong> <span th:text="${provider.location}">Location</span><br>
+                        <strong>Preferred Service:</strong> <span th:text="${provider.preferredService}">Preferred Service</span>
+                    </p>
+                    <div class="quantity-selector mb-3">
+                        <button class="btn btn-sm btn-secondary decrease">-</button>
+                        <input type="number" class="quantity-input" value="1" min="1" readonly>
+                        <button class="btn btn-sm btn-secondary increase">+</button>
+                    </div>
+                    <button class="btn-book add-to-cart" th:data-id="${provider.id}">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle quantity buttons
+            document.querySelectorAll('.decrease').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    const currentValue = parseInt(input.value);
+                    if (currentValue > 1) {
+                        input.value = currentValue - 1;
+                    }
+                });
+            });
+
+            document.querySelectorAll('.increase').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentElement.querySelector('.quantity-input');
+                    input.value = parseInt(input.value) + 1;
+                });
+            });
+
+            // Handle add to cart
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const providerId = this.getAttribute('data-id');
+                    const quantityInput = this.parentElement.querySelector('.quantity-input');
+                    const quantity = quantityInput.value;
+
+                    fetch('/addToCart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            providerId: providerId,
+                            quantity: quantity
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert('Item added to cart successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error adding item to cart');
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

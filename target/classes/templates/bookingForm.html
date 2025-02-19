@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #4682b4;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-toggler {
+            border-color: #fff;
+        }
+
+        .login-section {
+            padding: 30px 0px 100px 0px;
+            text-align: left;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 50px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form h2 {
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            color: #4682b4;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .form-group label {
+            text-align: left;
+        }
+
+        .form-group input {
+            margin-bottom: 20px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .signup-link a {
+            color: #4682b4;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Client Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/clientbookings">My bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">
+                        <i class="fa fa-shopping-cart"></i> Cart
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="clientlogout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Booking Section -->
+    <section class="login-section">
+        <div class="container">
+            <div class="login-form">
+                <h2>Book Appointment</h2>
+                <form action="/bookserviceprovider" method="post">
+                    <!-- Add cost display before the date field -->
+                    <div class="form-group">
+                        <label>Service Cost (per hour):</label>
+                        <input type="text" class="form-control" th:if="${cartItem != null}" th:value="${'$' + cartItem.service.chargePerHour}" readonly>
+                        <input type="text" class="form-control" th:unless="${cartItem != null}" th:value="${'$' + provider.preferredService}" readonly>
+                    </div>
+                    <!-- Debug output -->
+                    
+                    <!-- Modified QR Code section -->
+                    <div class="form-group text-center" th:unless="${provider.socialService == 1}">
+                        <label>Scan to pay:</label>
+                        <div>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PaymentInfo" 
+                                 alt="Payment QR Code" 
+                                 class="img-fluid" 
+                                 style="max-width: 150px; margin: 10px auto;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-date">Booking Date:</label>
+                        <input type="date" class="form-control" id="booking-date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-time">Booking Time:</label>
+                        <input type="time" class="form-control" id="booking-time" name="time" required>
+                    </div>
+                    <!-- Add hidden input for cart item ID -->
+                    <input type="hidden" name="cartItemId" th:value="${cartItemId}">
+                    <button type="submit" class="btn btn-primary btn-block">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+    </footer>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

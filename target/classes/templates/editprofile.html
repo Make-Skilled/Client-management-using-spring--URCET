@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #4682b4;">
+        <a class="navbar-brand" href="/serviceproviderdashboard">Service Provider Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/mybookings">My Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/acceptedbookings">Accepted Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/serviceproviderlogout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Edit Profile</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="/updateprofile" method="POST">
+                    <input type="hidden" name="id" th:value="${serviceProvider.id}"/>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" class="form-control" th:value="${serviceProvider.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" class="form-control" th:value="${serviceProvider.mobile}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" th:value="${serviceProvider.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" class="form-control" th:value="${serviceProvider.location}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredService">Preferred Service</label>
+                        <input type="text" id="preferredService" name="preferredService" class="form-control" th:value="${serviceProvider.preferredService}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget</label>
+                        <input type="number" id="budget" name="budget" class="form-control" th:value="${serviceProvider.budget}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary1">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

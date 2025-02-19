@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+        }
+
+        .navbar {
+            background-color: #4682b4;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-toggler {
+            border-color: #fff;
+        }
+
+        .footer {
+            background-color: #4682b4;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 170px;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .star-rating {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .star {
+            color: #e4e4e4;
+            border: none;
+            background: none;
+            padding: 0 2px;
+        }
+        .star.active {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar --> 
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">Client Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/clientbookings">My bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">
+                        <i class="fa fa-shopping-cart"></i> Cart
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="clientlogout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Booking Detail</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-primary">
+                <tr>
+                    <th>Service Provider</th>
+                    <th>Category</th>
+                    <th>Provider Mobile</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="booking : ${bookings}">
+                    <td th:text="${booking.serviceProvider.name}">Provider Name</td>
+                    <td th:text="${booking.serviceProvider.preferredService}">Category</td>
+                    <td th:text="${booking.serviceProvider.mobile}">Provider Mobile</td>
+                    <td th:text="${booking.date}">Date</td>
+                    <td th:text="${booking.time}">Time</td>
+                    <td th:text="${booking.address}">Address</td>
+                    <td th:text="${booking.status}">Status</td>
+                    <td>
+                        <a th:href="@{'/cancelbooking/' + ${booking.id}}"><button class="btn btn-danger">Cancel</button></a>
+                        <button th:if="${booking.status == 'FINISHED' and booking.status != 'RATED'}" 
+                                class="btn btn-primary rate-btn" 
+                                th:data-booking-id="${booking.id}"
+                                data-toggle="modal" 
+                                data-target="#ratingModal">Rate</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rate Service</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="star-rating text-center">
+                        <button class="star" data-value="1"><i class="fas fa-star"></i></button>
+                        <button class="star" data-value="2"><i class="fas fa-star"></i></button>
+                        <button class="star" data-value="3"><i class="fas fa-star"></i></button>
+                        <button class="star" data-value="4"><i class="fas fa-star"></i></button>
+                        <button class="star" data-value="5"><i class="fas fa-star"></i></button>
+                    </div>
+                    <input type="hidden" id="bookingId" value="">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitRating">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+    </footer>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star');
+        let currentRating = 0;
+
+        // Store booking ID when rate button is clicked
+        document.querySelectorAll('.rate-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('bookingId').value = this.getAttribute('data-booking-id');
+                resetStars();
+            });
+        });
+
+        // Handle star click
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.dataset.value);
+                currentRating = value;
+                updateStars(value);
+            });
+        });
+
+        function updateStars(value) {
+            stars.forEach(star => {
+                const starValue = parseInt(star.dataset.value);
+                if (starValue <= value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function resetStars() {
+            stars.forEach(star => star.classList.remove('active'));
+            currentRating = 0;
+        }
+
+        // Handle rating submission
+        document.getElementById('submitRating').addEventListener('click', function() {
+            const bookingId = document.getElementById('bookingId').value;
+            if (currentRating > 0) {
+                fetch('/submitRating', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        bookingId: bookingId,
+                        rating: currentRating
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide modal using Bootstrap's modal method
+                        $('#ratingModal').modal('hide');
+                        // Optional: Refresh the page to show updated ratings
+                        location.reload();
+                    } else {
+                        alert('Error submitting rating');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error submitting rating');
+                });
+            } else {
+                alert('Please select a rating');
+            }
+        });
+
+        // Add this to clear rating when modal is closed
+        $('#ratingModal').on('hidden.bs.modal', function () {
+            resetStars();
+        });
+    });
+    </script>
+</body>
+</html> 
+
