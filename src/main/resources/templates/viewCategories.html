@@ -1,162 +1,350 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Categories</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
+            background-color: #f8f9fa;
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f8ff;
         }
-
         .navbar {
             background-color: #4682b4;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
         }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            color: #fff;
+        .navbar-brand, .nav-link {
+            color: white !important;
         }
-
-        .nav-link {
-            color: #fff !important;
-        }
-
-        .navbar-toggler {
-            border-color: #fff;
-        }
-
-        .hero-section {
-            background-color: #4682b4;
-            color: #fff;
-            padding: 100px 0;
-            text-align: center;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.1);
+            transition: transform 0.3s;
             margin-bottom: 20px;
         }
-
-        .hero-section p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            margin: 20px 0;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
         }
-
+        .category-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.1);
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
         .footer {
             background-color: #4682b4;
-            color: #fff;
+            color: white;
             padding: 20px 0;
-            text-align: center;
             position: relative;
             bottom: 0;
             width: 100%;
-            margin-top: 170px; /* Space from content above */
+            margin-top: 50px;
         }
-
-        .footer a {
-            color: #fff;
-            text-decoration: none;
+        .table th {
+            background-color: #4682b4;
+            color: white;
         }
-
-        .footer a:hover {
-            text-decoration: underline;
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-
     <!-- Navbar -->
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="/admin/dashboard">Admin Dashboard</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="categoryDropdown" role="button" data-toggle="dropdown">
-                        Category
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/admin/addcategory">Add Category</a>
-                        <a class="dropdown-item" href="/admin/viewcategories">View Categories</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/servicehistory">Service History</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="usersDropdown" role="button" data-toggle="dropdown">
-                        Users
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="/admin/clients">Clients</a>
-                        <a class="dropdown-item" href="/admin/serviceproviders">Service Providers</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/logout">Logout</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/admin/dashboard">
+                <i class="fas fa-user-shield mr-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-home mr-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/viewservices">
+                            <i class="fas fa-cogs mr-1"></i>Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <h2>Categories List</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Category ID</th>
-                    <th>Category Name</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="category : ${categories}">
-                    <td th:text="${category.id}"></td>
-                    <td th:text="${category.name}"></td>
-                    <td th:text="${category.description}"></td>
-                    <td>
-                        <a th:if="${category.id != 9}"
-                           th:href="@{/admin/deletecategory/{id}(id=${category.id})}" 
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Are you sure you want to delete this category?')">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h2><i class="fas fa-list mr-2"></i>Categories</h2>
+                <p class="text-muted">Manage your service categories</p>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
+                    <i class="fas fa-plus mr-1"></i>Add Category
+                </button>
+            </div>
+        </div>
+
+        <!-- Categories Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="category : ${categories}">
+                                <td>
+                                    <img th:if="${category.imageUrl != null && !category.imageUrl.isEmpty()}" 
+                                         th:src="${category.imageUrl}"
+                                         class="category-image"
+                                         th:alt="${category.name}">
+                                    <i th:unless="${category.imageUrl != null && !category.imageUrl.isEmpty()}" 
+                                       class="fas fa-image fa-3x text-muted"></i>
+                                </td>
+                                <td th:text="${category.name}"></td>
+                                <td th:text="${category.description}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/viewsubcategories/' + ${category.id}}"
+                                       class="btn btn-info btn-sm">
+                                        <i class="fas fa-list mr-1"></i>View Subcategories
+                                    </a>
+                                    <button type="button" 
+                                            class="btn btn-success btn-sm ml-2"
+                                            th:onclick="'addSubcategory(' + ${category.id} + ')'">
+                                        <i class="fas fa-plus mr-1"></i>Add Subcategory
+                                    </button>
+                                    <button class="btn btn-warning btn-sm ml-2" 
+                                            th:onclick="'editCategory(' + ${category.id} + ')'">
+                                        <i class="fas fa-edit mr-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm ml-2" 
+                                            th:onclick="'deleteCategory(' + ${category.id} + ')'">
+                                        <i class="fas fa-trash mr-1"></i>Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Category</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="categoryName">Category Name</label>
+                            <input type="text" class="form-control" id="categoryName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryDescription">Description</label>
+                            <textarea class="form-control" id="categoryDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryImage">Image</label>
+                            <input type="file" class="form-control" id="categoryImage" name="image" accept="image/*" onchange="previewImage(this)">
+                            <small class="form-text text-muted">Please upload an image file (JPG, PNG, etc.)</small>
+                            <img id="imagePreview" class="image-preview d-none">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitCategory()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subcategory Modal -->
+    <div class="modal fade" id="subcategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Subcategory</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="subcategoryForm" enctype="multipart/form-data">
+                        <input type="hidden" id="parentCategoryId" name="parentCategoryId">
+                        <div class="form-group">
+                            <label for="subcategoryName">Name</label>
+                            <input type="text" class="form-control" id="subcategoryName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subcategoryDescription">Description</label>
+                            <textarea class="form-control" id="subcategoryDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="subcategoryImage">Image</label>
+                            <input type="file" class="form-control" id="subcategoryImage" name="image" accept="image/*" onchange="previewSubcategoryImage(this)">
+                            <small class="form-text text-muted">Please upload an image file (JPG, PNG, etc.)</small>
+                            <img id="subcategoryImagePreview" class="image-preview d-none">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitSubcategory()">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Admin Dashboard. All rights reserved.</p>
+        </div>
     </footer>
 
-    <!-- Bootstrap JS and jQuery -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
+        function previewSubcategoryImage(input) {
+            const preview = document.getElementById('subcategoryImagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitCategory() {
+            const form = document.getElementById('categoryForm');
+            const formData = new FormData(form);
+            
+            fetch('/admin/addcategory', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert('Error adding category: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding category');
+            });
+        }
+
+        function addSubcategory(categoryId) {
+            document.getElementById('parentCategoryId').value = categoryId;
+            $('#subcategoryModal').modal('show');
+        }
+
+        function submitSubcategory() {
+            const form = document.getElementById('subcategoryForm');
+            const formData = new FormData(form);
+            
+            fetch('/admin/addsubcategory', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    $('#subcategoryModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert('Error adding subcategory: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding subcategory');
+            });
+        }
+
+        function deleteCategory(id) {
+            if (confirm('Are you sure you want to delete this category? This will also delete all associated subcategories.')) {
+                fetch(`/admin/deletecategory/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting category: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting category');
+                });
+            }
+        }
+
+        function editCategory(id) {
+            // TODO: Implement edit functionality
+            alert('Edit functionality coming soon!');
+        }
+    </script>
 </body>
 </html>

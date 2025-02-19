@@ -1,260 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managing Multiple Clients</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Client_360 - Managing Multiple Clients</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f8ff;
-        }
-
-        .navbar {
-            background-color: #4682b4;
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            color: #fff;
-        }
-
-        .hero-section {
-            background-color: #4682b4;
-            color: #fff;
-            padding: 100px 0;
-            text-align: center;
-        }
-
-        .hero-section h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .hero-section p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .btn-primary {
-            background-color: #fff;
-            color: #4682b4;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-        }
-
-        .features-section {
-            padding: 60px 0;
-            text-align: center;
-        }
-
-        .features-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-        }
-
-        .features-section .feature-box {
-            background-color: #fff;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .feature-box i {
-            font-size: 3rem;
-            color: #4682b4;
-            margin-bottom: 20px;
-        }
-
-        .feature-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .projects-section {
-            padding: 60px 0;
-            background-color: #fff;
-            text-align: center;
-        }
-
-        .projects-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-        }
-
-        .project-box {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .project-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .testimonials-section {
-            padding: 60px 0;
-            background-color: #4682b4;
-            color: #fff;
-            text-align: center;
-        }
-
-        .testimonials-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-        }
-
-        .footer {
-            background-color: #4682b4;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .footer a {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-
-<body>
-
+<body class="bg-gray-50">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <a class="navbar-brand" href="#">Client_360</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav" style="margin-right: 150px;">
-            <ul class="navbar-nav ml-auto">
-                <!-- Login Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLogin" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        Login
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownLogin">
-                        <a class="dropdown-item" href="/clientlogin">Client login</a>
-                        <a class="dropdown-item" href="/serviceproviderlogin">Service Provider login</a>
-                        <a class="dropdown-item" href="/adminlogin">Admin login</a>
+    <nav class="bg-blue-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-white text-xl font-bold">Client_360</span>
                     </div>
-                </li>
-
-                <!-- Signup Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSignup" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        Signup
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownSignup">
-                        <a class="dropdown-item" href="/clientsignup">Client Signup</a>
-                        <a class="dropdown-item" href="/serviceprovidersignup">Service Provider Signup</a>
-                    </div>
-                </li>
-            </ul>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/clientlogin" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Client Login</a>
+                    <a href="/adminlogin" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Admin Login</a>
+                    <a href="/serviceproviderlogin" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Service Provider Login</a>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section">
-        <h1>Efficiently Manage Multiple Clients</h1>
-        <p>Streamline your workflow, track tasks, and improve client relationships</p>
-        <a href="/clientsignup" class="btn btn-primary">Get Started</a>
-    </section>
+    <div class="bg-blue-600">
+        <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                    Welcome to Client_360
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-blue-100 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    Streamline your client management process with our comprehensive platform
+                </p>
+                <div class="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+                    <div class="rounded-md shadow">
+                        <a href="/clientsignup" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                            Get Started
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <h2>Features</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="fa fa-users"></i>
-                        <h4>Client Management</h4>
-                        <p>Easily manage all your clients in one place and stay organized.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="fa fa-tasks"></i>
-                        <h4>Task Tracking</h4>
-                        <p>Keep track of ongoing tasks and deadlines to ensure smooth workflow.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="fa fa-comments"></i>
-                        <h4>Client Communication</h4>
-                        <p>Communicate effectively with your clients through integrated messaging.</p>
-                    </div>
-                </div>
+    <div class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:text-center">
+                <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Features</h2>
+                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                    Everything you need to manage your clients
+                </p>
             </div>
-        </div>
-    </section>
 
-    <!-- Projects Section -->
-    <section class="projects-section">
-        <div class="container">
-            <h2>Popular Services</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="project-box">
-                        <h4>Client Feedback System</h4>
-                        <p>Gather and manage feedback from your clients to improve your services.</p>
+            <div class="mt-10">
+                <div class="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
+                    <div class="relative">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg font-medium text-gray-900">Client Management</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Efficiently manage all your clients in one place with detailed profiles and history.
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="project-box">
-                        <h4>Invoice Management</h4>
-                        <p>Create and track invoices effortlessly with this integrated tool.</p>
+
+                    <div class="relative">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg font-medium text-gray-900">Booking Management</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Schedule and manage appointments with ease using our intuitive booking system.
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="project-box">
-                        <h4>Service Tracking</h4>
-                        <p>Monitor the status of services provided to clients for timely delivery.</p>
+
+                    <div class="relative">
+                        <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-16">
+                            <h3 class="text-lg font-medium text-gray-900">Service Provider Network</h3>
+                            <p class="mt-2 text-base text-gray-500">
+                                Connect with qualified service providers and manage service requests efficiently.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Testimonials Section -->
-    <section class="testimonials-section">
-        <div class="container">
-            <h2>What Our Clients Say</h2>
-            <p>"This platform helped us manage our clients more efficiently and improve communication!" – Business Owner</p>
-            <p>"I can now keep track of all my projects and deadlines in one place, making my job much easier!" – Project Manager</p>
+    <div class="bg-gray-50 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900">What Our Clients Say</h2>
+            </div>
+            <div class="mt-10">
+                <div class="space-y-4">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="text-gray-600 italic">"This platform helped us manage our clients more efficiently and improve communication!"</p>
+                        <p class="mt-2 text-gray-900 font-medium">– Business Owner</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <p class="text-gray-600 italic">"I can now keep track of all my projects and deadlines in one place, making my job much easier!"</p>
+                        <p class="mt-2 text-gray-900 font-medium">– Project Manager</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2024 Managing Clients | <a href="#">Contact Us</a></p>
+    <footer class="bg-gray-800">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-base text-gray-400">&copy; 2025 Client_360. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
-
-    <!-- Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Updated jQuery -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

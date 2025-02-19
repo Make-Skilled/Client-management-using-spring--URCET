@@ -100,6 +100,36 @@ public class ServiceProviderController {
 
         // Save the new service provider details
         serviceProviderRepository.save(serviceProvider);
+
+        // Send welcome email
+        String subject = "Welcome to Client_360 - Service Provider Registration";
+        String body = String.format("""
+            Dear %s,
+
+            Welcome to Client_360! Thank you for registering as a service provider.
+
+            Your account has been successfully created. You can now log in using your email address and password.
+
+            Here are your registration details:
+            - Name: %s
+            - Email: %s
+            - Location: %s
+            - Service Category: %s
+
+            We're excited to have you as part of our service provider network!
+
+            Best regards,
+            The Client_360 Team
+            """, 
+            serviceProvider.getName(),
+            serviceProvider.getName(),
+            serviceProvider.getEmail(),
+            serviceProvider.getLocation(),
+            serviceProvider.getPreferredService()
+        );
+
+        emailService.sendEmail(serviceProvider.getEmail(), subject, body);
+
         model.addAttribute("success", "Registration successful!");
         return "serviceProviderLogin";
     }
@@ -118,6 +148,7 @@ public class ServiceProviderController {
         session.setAttribute("serviceProviderEmail", serviceProvider.getEmail());
         session.setAttribute("serviceProviderId", serviceProvider.getId());
         session.setAttribute("userType", "serviceprovider");
+        session.setAttribute("name",serviceProvider.getName());
         return "redirect:/serviceproviderdashboard";
     }
 
@@ -157,6 +188,7 @@ public class ServiceProviderController {
         if (serviceProvider != null) {
             model.addAttribute("serviceProvider", serviceProvider);
             model.addAttribute("services", serviceRepository.findByServiceProvider(serviceProvider));
+            model.addAttribute("name",session.getAttribute("name"));
         } else {
             model.addAttribute("errorMessage", "Service Provider not found.");
         }

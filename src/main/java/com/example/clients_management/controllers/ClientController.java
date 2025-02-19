@@ -92,24 +92,6 @@ public class ClientController {
 		return serviceRepository.findByCategory_Id(categoryId);
 	}
 
-	@PostConstruct
-	public void initializeCategories() {
-		if (categoryRepository.count() == 0) {
-			String[][] categoriesData = {
-				{"Plumber", "Get professional plumbing services for your home or office"},
-				{"Electrician", "Our electricians offer expert electrical solutions"},
-				{"Cleaning", "Professional cleaning services for homes and businesses"},
-				{"Carpenter", "Get expert carpentry services for furniture repairs"}
-			};
-
-			for (String[] categoryData : categoriesData) {
-				Category category = new Category();
-				category.setName(categoryData[0]);
-				category.setDescription(categoryData[1]);
-				categoryRepository.save(category);
-			}
-		}
-	}
 
 	@GetMapping("/clientlogin")
 	public String login() {
@@ -155,6 +137,15 @@ public class ClientController {
 
 			// Save the new client details
 			clientRepository.save(client);
+			
+			// Send welcome email
+			String subject = "Welcome to Client Management System";
+			String body = "Dear " + client.getName() + ",\n\n" +
+						 "Welcome to our Client Management System! Your account has been successfully created.\n\n" +
+						 "You can now log in using your email: " + client.getEmail() + "\n\n" +
+						 "Best regards,\nClient Management Team";
+			emailservice.sendEmail(client.getEmail(), subject, body);
+			
 			return "redirect:/clientlogin";
 		} catch (Exception e) {
 			e.printStackTrace();

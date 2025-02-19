@@ -29,6 +29,12 @@ public class Service {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column
+    private String imageUrl;
+
+    @Column
+    private String description;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -68,5 +74,21 @@ public class Service {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

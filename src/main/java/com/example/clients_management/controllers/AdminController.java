@@ -1,11 +1,15 @@
 package com.example.clients_management.controllers;
 
 import java.util.List;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,18 +19,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.clients_management.entities.ClientDetails;
 import com.example.clients_management.entities.ServiceProviderDetails;
 import com.example.clients_management.entities.AdminDetails;
 import com.example.clients_management.entities.Bookings;
 import com.example.clients_management.entities.Category;
+import com.example.clients_management.entities.Subcategory;
 import com.example.clients_management.repositories.AdminRepository;
 import com.example.clients_management.repositories.ClientRepository;
 import com.example.clients_management.repositories.ServiceProviderRepository;
 import com.example.clients_management.repositories.BookingsRepository;
 import com.example.clients_management.repositories.CategoryRepository;
-
+import com.example.clients_management.repositories.SubcategoryRepository;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -49,6 +57,30 @@ public class AdminController {
 
     @Autowired
     private CategoryRepository categoryRepository;  
+
+    @Autowired
+    private SubcategoryRepository subcategoryRepository;
+
+    private static final String UPLOAD_DIR = "uploads";
+
+    private String saveFile(MultipartFile file, String directory) throws IOException {
+        // Create directory if it doesn't exist
+        Path uploadPath = Paths.get(directory);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Generate unique filename
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID().toString() + extension;
+
+        // Save file
+        Path filePath = uploadPath.resolve(filename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        return filename;
+    }
 
     @GetMapping("/adminlogin")
     public String showLoginPage() {
@@ -74,10 +106,21 @@ public class AdminController {
     }
 
     @GetMapping("/admin/dashboard")
-    public String showDashboard(HttpSession session) {
+    public String showDashboard(Model model, HttpSession session) {
         if (session.getAttribute("adminId") == null) {
             return "redirect:/adminlogin";
         }
+
+        // Add statistics
+        long clientCount = clientRepository.count();
+        long providerCount = serviceProviderRepository.count();
+        long categoryCount = categoryRepository.count();
+        long bookingCount = bookingsRepository.count();
+
+        model.addAttribute("clientCount", clientCount);
+        model.addAttribute("serviceProviderCount", providerCount);
+        model.addAttribute("categoryCount", categoryCount);
+        model.addAttribute("bookingCount", bookingCount);
         return "adminDashboard";
     }
 
@@ -90,61 +133,39 @@ public class AdminController {
     }
 
     @PostMapping("/admin/addcategory")
-    public String addCategory(
-            @RequestParam String categoryName,
-            @RequestParam String description,
-            @RequestParam("categoryImage") MultipartFile file,
-            HttpSession session,
-            Model model) {
-        
-        if (session.getAttribute("adminId") == null) {
-            return "redirect:/adminlogin";
-        }
-
-        Category category = new Category();
-        category.setName(categoryName);
-        category.setDescription(description);
-
+    @ResponseBody
+    public Map<String, Object> addCategory(@RequestParam("name") String name,
+                                         @RequestParam("description") String description,
+                                         @RequestParam(value = "image", required = false) MultipartFile file) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            // Handle file upload
-            if (!file.isEmpty()) {
-                // Create uploads directory if it doesn't exist
-                String uploadDir = "src/main/resources/static/uploads";
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
+            Category category = new Category();
+            category.setName(name);
+            category.setDescription(description);
 
-                // Generate unique filename
-                String originalFilename = file.getOriginalFilename();
-                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-                String filename = UUID.randomUUID().toString() + extension;
-
-                // Save file
-                Path filePath = uploadPath.resolve(filename);
-                Files.copy(file.getInputStream(), filePath);
-
-                // Save image URL in category
-                category.setImageUrl("/uploads/" + filename);
+            if (file != null && !file.isEmpty()) {
+                String fileName = saveFile(file, UPLOAD_DIR);
+                category.setImageUrl("/uploads/" + fileName);
             }
 
             categoryRepository.save(category);
-            return "redirect:/admin/viewcategories";
-        } catch (IOException e) {
-            model.addAttribute("error", "Error uploading file: " + e.getMessage());
-            return "addCategory";
+            response.put("success", true);
+            response.put("message", "Category added successfully");
         } catch (Exception e) {
-            model.addAttribute("error", "Category with this name already exists");
-            return "addCategory";
+            response.put("success", false);
+            response.put("message", e.getMessage());
         }
+        return response;
     }
 
     @GetMapping("/admin/viewcategories")
-    public String showViewCategories(HttpSession session, Model model) {
+    public String viewCategories(Model model, HttpSession session) {
         if (session.getAttribute("adminId") == null) {
             return "redirect:/adminlogin";
         }
-        model.addAttribute("categories", categoryRepository.findAll());
+
+        List<Category> categories = categoryRepository.findAll();
+        model.addAttribute("categories", categories);
         return "viewCategories";
     }
 
@@ -210,6 +231,31 @@ public class AdminController {
         }
         
         return "redirect:/admin/viewcategories";
+    }
+
+    @DeleteMapping("/admin/deletecategory/{id}")
+    @ResponseBody
+    public Map<String, Object> deleteCategory(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = categoryRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            // Delete the image file if it exists
+            if (category.getImageUrl() != null && !category.getImageUrl().isEmpty()) {
+                String fileName = category.getImageUrl().substring(category.getImageUrl().lastIndexOf("/") + 1);
+                Path filePath = Paths.get(UPLOAD_DIR, fileName);
+                Files.deleteIfExists(filePath);
+            }
+
+            categoryRepository.delete(category);
+            response.put("success", true);
+            response.put("message", "Category deleted successfully");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
     }
 
     @GetMapping("/admin/deleterequest/{id}")
@@ -325,4 +371,83 @@ public class AdminController {
         return "redirect:/admin/serviceproviders";
     }
 
+    @GetMapping("/admin/subcategories/{categoryId}")
+    @ResponseBody
+    public List<Subcategory> getSubcategories(@PathVariable Long categoryId) {
+        return subcategoryRepository.findByCategoryId(categoryId);
+    }
+
+    @GetMapping("/admin/viewsubcategories/{categoryId}")
+    public String viewSubcategories(@PathVariable Long categoryId, Model model, HttpSession session) {
+        if (session.getAttribute("adminId") == null) {
+            return "redirect:/adminlogin";
+        }
+
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new RuntimeException("Category not found"));
+        List<Subcategory> subcategories = subcategoryRepository.findByCategoryId(categoryId);
+
+        model.addAttribute("category", category);
+        model.addAttribute("subcategories", subcategories);
+
+        return "viewSubcategories";
+    }
+
+    @PostMapping("/admin/addsubcategory")
+    @ResponseBody
+    public Map<String, Object> addSubcategory(
+            @RequestParam("parentCategoryId") Long categoryId,
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("image") MultipartFile image) {
+        
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+            String fileName = saveFile(image, UPLOAD_DIR);
+
+            Subcategory subcategory = new Subcategory();
+            subcategory.setName(name);
+            subcategory.setDescription(description);
+            subcategory.setImageUrl("/uploads/" + fileName);
+            subcategory.setCategory(category);
+
+            subcategoryRepository.save(subcategory);
+
+            response.put("success", true);
+            response.put("message", "Subcategory added successfully");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
+
+    @DeleteMapping("/admin/deletesubcategory/{id}")
+    @ResponseBody
+    public Map<String, Object> deleteSubcategory(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Get subcategory to delete its image
+            Subcategory subcategory = subcategoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Subcategory not found"));
+
+            // Delete image file if it exists
+            if (subcategory.getImageUrl() != null) {
+                String imagePath = new File(".").getCanonicalPath() + File.separator + 
+                                 UPLOAD_DIR + File.separator + subcategory.getImageUrl();
+                Files.deleteIfExists(Paths.get(imagePath));
+            }
+
+            subcategoryRepository.deleteById(id);
+            response.put("success", true);
+            response.put("message", "Subcategory deleted successfully");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+        }
+        return response;
+    }
 }
