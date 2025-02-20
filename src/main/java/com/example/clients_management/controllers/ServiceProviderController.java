@@ -159,6 +159,9 @@ public class ServiceProviderController {
         session.setAttribute("serviceProviderId", serviceProvider.getId());
         session.setAttribute("userType", "serviceprovider");
         session.setAttribute("name",serviceProvider.getName());
+        model.addAttribute("email",serviceProvider.getEmail());
+        model.addAttribute("category",serviceProvider.getPreferredService());
+        model.addAttribute("location",serviceProvider.getLocation());
         return "redirect:/serviceproviderdashboard";
     }
 
@@ -435,5 +438,17 @@ public class ServiceProviderController {
         }
 
         return "redirect:/serviceproviderdashboard";
+    }
+    
+    @GetMapping("/book-service/{id}")
+    public String showBookingPage(@PathVariable Long id, Model model) {
+        ServiceProviderDetails provider = serviceProviderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid service provider ID: " + id));
+
+        if (provider == null) {
+            return "redirect:/service-providers?error=provider-not-found";
+        }
+        model.addAttribute("provider", provider);
+        return "book-service";
     }
 }

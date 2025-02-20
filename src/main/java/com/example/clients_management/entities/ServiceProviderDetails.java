@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ServiceProviderDetails {
@@ -39,6 +41,10 @@ public class ServiceProviderDetails {
 
     @Column(nullable = false)
     private Integer socialService = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id")
+    private Subcategory subcategory;
 
     public Long getId() {
         return id;
@@ -118,5 +124,13 @@ public class ServiceProviderDetails {
 
     public void setSocialService(Integer socialService) {
         this.socialService = socialService;
+    }
+
+    public Subcategory getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(Subcategory subcategory) {
+        this.subcategory = subcategory;
     }
 }

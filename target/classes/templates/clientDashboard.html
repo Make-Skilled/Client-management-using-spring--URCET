@@ -71,11 +71,7 @@
                             <div class="p-4">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2" th:text="${category.name}">Category Name</h3>
                                 <p class="text-sm text-gray-600 mb-4" th:text="${category.description}">Category Description</p>
-                                <button 
-                                    th:onclick="'loadServices(' + ${category.id} + ')'"
-                                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200">
-                                    View Services
-                                </button>
+                                <a th:href="@{/client/services/{id}(id=${category.id})}" class="bg-blue-600 text-white px-4 py-2 rounded-md">View Services</a>
                             </div>
                         </div>
                     </div>

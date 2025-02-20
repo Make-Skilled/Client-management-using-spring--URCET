@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Subcategories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Available Subcategories</h1>
+            <p class="text-gray-600 mt-2">Choose a subcategory to view available services</p>
+        </div>
+
+        <!-- Subcategories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div th:each="subcategory : ${subcategories}" 
+                 class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                <div class="relative">
+                    <!-- Image -->
+                    <img th:if="${subcategory.imageUrl}" 
+                         th:src="${subcategory.imageUrl}"
+                         class="w-full h-48 object-cover rounded-t-lg"
+                         alt="Subcategory Image">
+                    <div th:unless="${subcategory.imageUrl}" 
+                         class="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center">
+                        <span class="text-gray-400">No image available</span>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Title -->
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2" 
+                        th:text="${subcategory.name}">Subcategory Name</h2>
+                    
+                    <!-- Description -->
+                    <p class="text-gray-600 mb-4" 
+                       th:text="${subcategory.description}">Subcategory Description</p>
+
+                    <!-- Action Button -->
+                    <a th:href="@{/client/subcategory/{id}/providers(id=${subcategory.id})}"
+                       class="inline-block w-full text-center bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">
+                        View Service Providers
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${#lists.isEmpty(subcategories)}" 
+             class="text-center py-12">
+            <div class="text-gray-400 text-xl">
+                No subcategories available at the moment
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="mt-8">
+            <a href="javascript:history.back()" 
+               class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Categories
+            </a>
+        </div>
+    </div>
+</body>
+</html>

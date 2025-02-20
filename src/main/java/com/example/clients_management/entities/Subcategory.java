@@ -28,6 +28,10 @@ public class Subcategory {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Service service;
+
     @Transient
     private ServiceProviderCharge charge;
 
@@ -70,6 +74,14 @@ public class Subcategory {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public ServiceProviderCharge getCharge() {

@@ -1,8 +1,9 @@
 package com.example.clients_management.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.clients_management.dto.BookingRequest;
+import com.example.clients_management.entities.Subcategory;
+import com.example.clients_management.entities.ServiceProviderCharge;
 import com.example.clients_management.entities.Bookings;
 import com.example.clients_management.entities.ClientDetails;
 import com.example.clients_management.entities.ServiceProviderDetails;
@@ -27,7 +31,9 @@ import com.example.clients_management.repositories.BookingsRepository;
 import com.example.clients_management.repositories.ClientRepository;
 import com.example.clients_management.repositories.ServiceProviderRepository;
 import com.example.clients_management.service.EmailService;
+import com.example.clients_management.service.ServiceProviderChargeService;
 import com.example.clients_management.service.CartService;
+import com.example.clients_management.service.SubcategoryService;
 
 import com.example.clients_management.entities.Category;
 import com.example.clients_management.repositories.CategoryRepository;
@@ -62,6 +68,10 @@ public class ClientController {
 
 	@Autowired
 	private ServiceRepository serviceRepository;
+
+	@Autowired
+	private SubcategoryService subcategoryService;
+	
 
 	@GetMapping("/")
 	public String land(HttpSession session, Model model) {
@@ -416,5 +426,114 @@ public class ClientController {
 	                           .body(Map.of("success", false));
 	    }
 	}
+	@GetMapping("/client/services/{serviceId}")
+	public String viewServiceSubcategories(@PathVariable Long serviceId, Model model) {
+		List<Subcategory> subcategories = subcategoryService.getSubcategoriesByServiceId(serviceId);
+		model.addAttribute("subcategories", subcategories);
+		return "subcategories";
+	}
 
+	@Autowired
+	ServiceProviderChargeService serviceProviderChargeService;
+
+	@GetMapping("/client/subcategory/{subcategoryId}/providers")
+	public String viewServiceProviders(@PathVariable Long subcategoryId, Model model, HttpSession session) {
+		// Get client email from session
+		String clientEmail = (String) session.getAttribute("clientEmail");
+		if (clientEmail == null) {
+			return "redirect:/client/login";
+		}
+
+		// Get service providers for the subcategory
+		List<ServiceProviderDetails> providers = serviceProviderChargeService.getServiceProvidersBySubcategoryId(subcategoryId);
+		
+		// Get charge details for each provider
+		Map<Long, ServiceProviderCharge> chargeDetails = new HashMap<>();
+		for (ServiceProviderDetails provider : providers) {
+			ServiceProviderCharge charge = serviceProviderChargeService.getChargeByProviderAndSubcategory(provider.getId(), subcategoryId);
+			chargeDetails.put(provider.getId(), charge);
+		}
+		
+		// Add attributes to model
+		model.addAttribute("providers", providers);
+		model.addAttribute("chargeDetails", chargeDetails);
+		model.addAttribute("clientEmail", clientEmail);
+		
+		return "service-providers";
+	}
+
+	@PostMapping("/client/create-booking")
+	@ResponseBody
+	public Map<String, Object> createBooking(
+		@RequestParam("providerId") Long providerId,
+		@RequestParam("bookingDate") String bookingDate,
+		@RequestParam("bookingTime") String bookingTime,
+		@RequestParam(value = "notes", required = false) String notes,
+		HttpSession session) {
+	
+		Map<String, Object> response = new HashMap<>();
+	
+		try {
+			// Get client email from session
+			String clientEmail = (String) session.getAttribute("clientEmail");
+			if (clientEmail == null) {
+				response.put("success", false);
+				response.put("message", "Please login to book a service");
+				return response;
+			}
+	
+			// Get service provider details
+			Optional<ServiceProviderDetails> providerOpt = spr.findById(providerId);
+			if (!providerOpt.isPresent()) {
+				response.put("success", false);
+				response.put("message", "Service provider not found");
+				return response;
+			}
+			ServiceProviderDetails provider = providerOpt.get();
+	
+			// Get client details
+			ClientDetails client = clientRepository.findByEmail(clientEmail);
+			if (client == null) {
+				response.put("success", false);
+				response.put("message", "Client details not found");
+				return response;
+			}
+	
+			// Create booking
+			Bookings booking = new Bookings();
+			booking.setServiceProviderId(providerId);
+			booking.setBookedBy(clientEmail);
+			booking.setDate(bookingDate);
+			booking.setTime(bookingTime);
+			booking.setAddress(client.getLocation());
+			booking.setPhone(client.getMobile());
+			booking.setStatus("PENDING");
+	
+			// Save booking
+			bookingsRepository.save(booking);
+	
+			// Send notification email to provider
+			String providerMessage = String.format(
+				"New booking request from %s\nDate: %s\nTime: %s\nContact: %s\nAddress: %s",
+				clientEmail, bookingDate, bookingTime, client.getMobile(), client.getLocation()
+			);
+			emailservice.sendEmail(provider.getEmail(), "New Booking Request", providerMessage);
+	
+			// Send confirmation email to client
+			String clientMessage = String.format(
+				"Your booking with %s has been created\nDate: %s\nTime: %s\nStatus: %s\nThe service provider will contact you shortly.",
+				provider.getName(), bookingDate, bookingTime, booking.getStatus()
+			);
+			emailservice.sendEmail(clientEmail, "Booking Confirmation", clientMessage);
+	
+			response.put("success", true);
+			response.put("message", "Booking created successfully");
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", e.getMessage());
+		}
+	
+		return response;
+	}
+	
 }

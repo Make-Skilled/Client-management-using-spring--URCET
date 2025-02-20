@@ -10,7 +10,7 @@ public interface ServiceProviderRepository extends JpaRepository<ServiceProvider
     boolean existsByName(String username);
     boolean existsByEmail(String email);
 	ServiceProviderDetails findByEmail(String email);
-	//List<ServiceProviderDetails> findByPreferredService(String filter);
 	List<ServiceProviderDetails> findByPreferredService(String preferredService);
     boolean existsByMobile(String mobile);
+    List<ServiceProviderDetails> findBySubcategoryId(Long subcategoryId);
 }
