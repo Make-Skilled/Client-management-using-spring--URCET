@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Subcategory {
@@ -26,6 +27,9 @@ public class Subcategory {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @Transient
+    private ServiceProviderCharge charge;
 
     // Getters and Setters
     public Long getId() {
@@ -66,5 +70,13 @@ public class Subcategory {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public ServiceProviderCharge getCharge() {
+        return charge;
+    }
+
+    public void setCharge(ServiceProviderCharge charge) {
+        this.charge = charge;
     }
 }

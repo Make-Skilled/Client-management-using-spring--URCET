@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.clients_management.entities.Bookings;
 import com.example.clients_management.entities.ClientDetails;
@@ -28,17 +27,14 @@ import com.example.clients_management.entities.CartItem;
 import com.example.clients_management.repositories.BookingsRepository;
 import com.example.clients_management.repositories.ClientRepository;
 import com.example.clients_management.repositories.ServiceProviderRepository;
-import com.example.clients_management.service.BookingService;
 import com.example.clients_management.service.EmailService;
 import com.example.clients_management.service.CartService;
-import com.example.clients_management.service.ClientService;
 
 import com.example.clients_management.entities.Category;
 import com.example.clients_management.repositories.CategoryRepository;
 import com.example.clients_management.entities.Service;
 import com.example.clients_management.repositories.ServiceRepository;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -54,9 +50,6 @@ public class ClientController {
 	ServiceProviderRepository spr;
 
 	@Autowired
-	private BookingService bookingService;
-
-	@Autowired
 	ClientRepository clientRepository;
 
 	@Autowired
@@ -67,9 +60,6 @@ public class ClientController {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
-
-	@Autowired
-	private ClientService clientService;
 
 	@Autowired
 	private ServiceRepository serviceRepository;

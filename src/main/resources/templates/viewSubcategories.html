@@ -107,7 +107,7 @@
             <div class="col-md-4" th:each="subcategory : ${subcategories}">
                 <div class="card">
                     <img th:if="${subcategory.imageUrl != null}" 
-                         th:src="@{'/uploads/' + ${subcategory.imageUrl}}"
+                         th:src="${subcategory.imageUrl}"
                          class="card-img-top" 
                          th:alt="${subcategory.name}">
                     <div th:if="${subcategory.imageUrl == null}" 

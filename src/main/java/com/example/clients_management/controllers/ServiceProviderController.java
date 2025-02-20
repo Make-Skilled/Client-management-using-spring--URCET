@@ -6,10 +6,14 @@ import com.example.clients_management.entities.Category;
 import com.example.clients_management.entities.Service;
 import com.example.clients_management.entities.Bookings;
 import com.example.clients_management.entities.ServiceProviderDetails;
+import com.example.clients_management.entities.Subcategory;
+import com.example.clients_management.entities.ServiceProviderCharge;
 import com.example.clients_management.repositories.CategoryRepository;
 import com.example.clients_management.repositories.ServiceProviderRepository;
 import com.example.clients_management.repositories.ServiceRepository;
 import com.example.clients_management.repositories.BookingsRepository;
+import com.example.clients_management.repositories.SubcategoryRepository;
+import com.example.clients_management.repositories.ServiceProviderChargeRepository;
 import com.example.clients_management.service.BookingService;
 import com.example.clients_management.service.EmailService;
 
@@ -45,6 +49,12 @@ public class ServiceProviderController {
     
     @Autowired
     private ServiceRepository serviceRepository;
+    
+    @Autowired
+    private SubcategoryRepository subcategoryRepository;
+    
+    @Autowired
+    private ServiceProviderChargeRepository serviceProviderChargeRepository;
         
     private final PasswordEncoder passwordEncoder;
 
@@ -188,7 +198,26 @@ public class ServiceProviderController {
         if (serviceProvider != null) {
             model.addAttribute("serviceProvider", serviceProvider);
             model.addAttribute("services", serviceRepository.findByServiceProvider(serviceProvider));
-            model.addAttribute("name",session.getAttribute("name"));
+            model.addAttribute("name", session.getAttribute("name"));
+
+            // Get the provider's category
+            Category providerCategory = categoryRepository.findByName(serviceProvider.getPreferredService());
+            if (providerCategory != null) {
+                // Get subcategories for the provider's category
+                List<Subcategory> subcategories = subcategoryRepository.findByCategoryName(serviceProvider.getPreferredService());
+                for (Subcategory subcategory : subcategories) {
+                    ServiceProviderCharge charge = serviceProviderChargeRepository
+                        .findByServiceProviderAndSubcategory(serviceProvider, subcategory);
+                    if (charge == null) {
+                        charge = new ServiceProviderCharge();
+                        charge.setServiceProvider(serviceProvider);
+                        charge.setSubcategory(subcategory);
+                        charge.setChargePerHour(0.0); // Initialize with zero
+                    }
+                    subcategory.setCharge(charge);
+                }
+                model.addAttribute("subcategories", subcategories);
+            }
         } else {
             model.addAttribute("errorMessage", "Service Provider not found.");
         }
@@ -370,6 +399,41 @@ public class ServiceProviderController {
         service.setCategory(category);
 
         serviceRepository.save(service);
+        return "redirect:/serviceproviderdashboard";
+    }
+    
+    @PostMapping("/setcharge")
+    public String setCharge(@RequestParam Long subcategoryId,
+                           @RequestParam Double chargePerHour,
+                           HttpSession session,
+                           RedirectAttributes redirectAttributes) {
+        String email = (String) session.getAttribute("serviceProviderEmail");
+        if (email == null) {
+            return "redirect:/serviceproviderlogin";
+        }
+
+        try {
+            ServiceProviderDetails serviceProvider = serviceProviderRepository.findByEmail(email);
+            Subcategory subcategory = subcategoryRepository.findById(subcategoryId)
+                .orElseThrow(() -> new RuntimeException("Subcategory not found"));
+
+            ServiceProviderCharge charge = serviceProviderChargeRepository
+                .findByServiceProviderAndSubcategory(serviceProvider, subcategory);
+
+            if (charge == null) {
+                charge = new ServiceProviderCharge();
+                charge.setServiceProvider(serviceProvider);
+                charge.setSubcategory(subcategory);
+            }
+
+            charge.setChargePerHour(chargePerHour);
+            serviceProviderChargeRepository.save(charge);
+
+            redirectAttributes.addFlashAttribute("success", "Charge updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update charge: " + e.getMessage());
+        }
+
         return "redirect:/serviceproviderdashboard";
     }
 }

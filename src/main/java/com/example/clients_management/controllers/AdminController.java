@@ -1,6 +1,5 @@
 package com.example.clients_management.controllers;
 
-import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.clients_management.entities.ClientDetails;
@@ -139,11 +138,35 @@ public class AdminController {
                                          @RequestParam(value = "image", required = false) MultipartFile file) {
         Map<String, Object> response = new HashMap<>();
         try {
+            // Validate input
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Category name is required");
+            }
+            if (description == null || description.trim().isEmpty()) {
+                throw new IllegalArgumentException("Category description is required");
+            }
+
+            // Check if category name already exists
+            if (categoryRepository.findByName(name) != null) {
+                throw new IllegalArgumentException("Category with this name already exists");
+            }
+
             Category category = new Category();
-            category.setName(name);
-            category.setDescription(description);
+            category.setName(name.trim());
+            category.setDescription(description.trim());
 
             if (file != null && !file.isEmpty()) {
+                // Validate file type
+                String contentType = file.getContentType();
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    throw new IllegalArgumentException("Only image files are allowed");
+                }
+
+                // Validate file size (max 5MB)
+                if (file.getSize() > 5 * 1024 * 1024) {
+                    throw new IllegalArgumentException("File size should not exceed 5MB");
+                }
+
                 String fileName = saveFile(file, UPLOAD_DIR);
                 category.setImageUrl("/uploads/" + fileName);
             }
@@ -151,6 +174,7 @@ public class AdminController {
             categoryRepository.save(category);
             response.put("success", true);
             response.put("message", "Category added successfully");
+            response.put("category", category);
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", e.getMessage());
