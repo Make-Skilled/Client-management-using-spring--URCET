@@ -64,12 +64,15 @@
                         <td class="py-2 px-4" th:text="${booking.phone}">Phone</td>
                         <td class="py-2 px-4">
                             <span th:text="${booking.status}"
-                                  th:class="${booking.status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'} + ' px-2 py-1 rounded-full text-sm font-medium'">
+                                  th:class="${booking.status == 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                                            (booking.status == 'FORWARDED' ? 'bg-blue-100 text-blue-800' : 
+                                            (booking.status == 'REJECTED' ? 'bg-red-100 text-red-800' : 
+                                            'bg-gray-100 text-gray-800'))} + ' px-2 py-1 rounded-full text-sm font-medium'">
                                 Status
                             </span>
                         </td>
                         <td class="py-2 px-4">
-                            <div th:if="${booking.status == 'pending'}" class="flex space-x-2">
+                            <div th:if="${booking.status == 'PENDING'}" class="flex space-x-2">
                                 <a th:href="@{/forward-booking/{id}(id=${booking.id})}" 
                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition duration-150 ease-in-out">
                                     Forward
@@ -78,6 +81,9 @@
                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-150 ease-in-out">
                                     Reject
                                 </a>
+                            </div>
+                            <div th:if="${booking.status != 'PENDING'}" class="text-sm text-gray-500 italic">
+                                No actions available
                             </div>
                         </td>
                     </tr>

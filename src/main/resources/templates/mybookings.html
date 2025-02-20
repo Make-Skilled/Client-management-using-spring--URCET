@@ -89,22 +89,25 @@
                         </td>
 
                         <!-- Customer Actions -->
-                        <td class="py-2 px-4 flex space-x-2" th:if="${userType == 'customer'}">
+                        <td class="py-2 px-4" th:if="${userType == 'customer'}">
                             <div x-data="{ showRatingModal: false, rating: 0 }" class="flex space-x-2">
-                                <a th:href="@{/cancelbooking/{id}(id=${booking.id})}" 
-                                   th:if="${booking.status != 'FORWARDED' && booking.status != 'COMPLETED'}"
-                                   class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
+                                <!-- Show Cancel button only if status is PENDING -->
+                                <a th:if="${booking.status == 'PENDING'}" 
+                                   th:href="@{/cancelbooking/{id}(id=${booking.id})}" 
+                                   class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition duration-150">
                                     Cancel
                                 </a>
+                                
+                                <!-- Show Complete button only if status is FORWARDED -->
                                 <button th:if="${booking.status == 'FORWARDED'}"
                                         @click="showRatingModal = true"
-                                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+                                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition duration-150">
                                     Complete
                                 </button>
-
-                                <!-- Rating Modal -->
+                        
+                                <!-- Rating Modal - remains the same as in your original code -->
                                 <div x-show="showRatingModal" 
-                                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                                     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                     <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full" @click.away="showRatingModal = false">
                                         <h3 class="text-lg font-semibold mb-4">Rate Service Provider</h3>
                                         <form th:action="@{/complete-booking/{id}(id=${booking.id})}" method="post">
@@ -144,8 +147,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
+                        </td>                    </tr>
                 </tbody>
             </table>
         </div>

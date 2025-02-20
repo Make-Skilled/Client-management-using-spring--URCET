@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-checkmark {
+            animation: checkmark 0.5s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
+            <!-- Animated Success Icon -->
+            <div class="mb-6">
+                <div class="mx-auto h-24 w-24 rounded-full bg-green-100 flex items-center justify-center animate-checkmark">
+                    <svg class="h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Payment Successful!</h2>
+            <p class="text-gray-600 text-lg mb-8">Thank you for your payment</p>
+
+            <!-- Payment Details -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Amount Paid</span>
+                        <span class="text-xl font-semibold text-gray-900">₹500.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Status</span>
+                        <span class="text-green-600 font-semibold">Completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Notification -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 text-left">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-blue-800">
+                            A confirmation email has been sent to both you and the service provider.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Return Button -->
+            <a href="/serviceprovider-bookings" 
+               class="inline-block w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-150 font-semibold">
+                Return to Bookings
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect after 5 seconds
+        setTimeout(function() {
+            window.location.href = '/serviceprovider-bookings';
+        }, 5000);
+    </script>
+</body>
+</html>

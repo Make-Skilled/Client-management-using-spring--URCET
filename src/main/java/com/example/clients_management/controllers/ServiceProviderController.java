@@ -16,6 +16,7 @@ import com.example.clients_management.repositories.SubcategoryRepository;
 import com.example.clients_management.repositories.ServiceProviderChargeRepository;
 import com.example.clients_management.service.BookingService;
 import com.example.clients_management.service.EmailService;
+import com.example.clients_management.services.QRCodeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,6 +56,9 @@ public class ServiceProviderController {
     
     @Autowired
     private ServiceProviderChargeRepository serviceProviderChargeRepository;
+    
+    @Autowired
+    private QRCodeService qrCodeService;
         
     private final PasswordEncoder passwordEncoder;
 
@@ -549,5 +553,54 @@ public class ServiceProviderController {
         }
 
         return "redirect:/booking-requests";
+    }
+
+    @GetMapping("/serviceprovider-bookings")
+    public String viewServiceProviderBookings(Model model, HttpSession session) {
+        // Get service provider email from session
+        String email = (String) session.getAttribute("serviceProviderEmail");
+        if (email == null) {
+            return "redirect:/serviceproviderlogin";
+        }
+
+        // Get service provider details
+        ServiceProviderDetails provider = serviceProviderRepository.findByEmail(email);
+        if (provider == null) {
+            return "redirect:/serviceproviderlogin";
+        }
+
+        // Get forwarded bookings for this service provider
+        List<String> statuses = java.util.Arrays.asList("FORWARDED", "COMPLETED");
+        List<Bookings> bookings = bookingsRepository.findByServiceProviderIdAndStatusIn(provider.getId(), statuses);
+
+        model.addAttribute("bookings", bookings);
+        return "serviceprovider-bookings";
+    }
+
+    @GetMapping("/process-payment/{id}")
+    public String processPayment(@PathVariable Long id, Model model) {
+        try {
+            // Get the booking
+            Bookings booking = bookingsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            // Generate payment URL
+            String paymentUrl = qrCodeService.generatePaymentUrl(booking.getId());
+            
+            // Add payment details to model
+            model.addAttribute("paymentUrl", paymentUrl);
+            model.addAttribute("bookingId", id);
+            model.addAttribute("amount", "₹500.00");
+            
+            return "payment-qr";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to process payment: " + e.getMessage());
+            return "serviceprovider-bookings";
+        }
+    }
+
+    @GetMapping("/test-payment")
+    public String handleTestPayment() {
+        return "payment-success";
     }
 }
