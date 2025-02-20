@@ -442,6 +442,8 @@ public class ClientController {
 	@Autowired
 	ServiceProviderChargeService serviceProviderChargeService;
 
+
+
 	@GetMapping("/client/subcategory/{subcategoryId}/providers")
 	public String viewServiceProviders(@PathVariable Long subcategoryId, Model model, HttpSession session) {
 		// Get client email from session
@@ -449,6 +451,7 @@ public class ClientController {
 		if (clientEmail == null) {
 			return "redirect:/client/login";
 		}
+		session.setAttribute("subId",subcategoryId);	
 
 		// Get service providers for the subcategory
 		List<ServiceProviderDetails> providers = serviceProviderChargeService.getServiceProvidersBySubcategoryId(subcategoryId);

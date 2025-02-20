@@ -6,6 +6,33 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
 
+    <!-- Modal for Charges -->
+    <div id="chargesModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">Service Charges</h3>
+                <button onclick="closeChargesModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-blue-50 rounded-lg p-6">
+                    <p class="text-lg text-gray-700">Hourly Rate:</p>
+                    <p class="text-3xl font-bold text-blue-600" id="modalCharges">Loading...</p>
+                </div>
+                <p class="text-sm text-gray-600">* Rates are subject to change based on service complexity and duration.</p>
+            </div>
+            <div class="mt-8">
+                <button onclick="closeChargesModal()" 
+                        class="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold hover:bg-blue-700">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
@@ -47,7 +74,10 @@
 
                 <!-- Buttons -->
                 <div class="grid grid-cols-2 gap-4 pt-4">
-                    <button class="px-4 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-semibold">View Charges</button>
+                    <button th:onclick="'showCharges(' + ${provider.id} + ')'"
+                            class="px-4 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50">
+                        View Charges
+                    </button>
                     
                     <!-- Book Service Button -->
                     <a th:href="@{/book-service/{id}(id=${provider.id})}"
@@ -75,7 +105,7 @@
         </div>
     </div>
 
-    <!-- JavaScript for Filtering Providers -->
+    <!-- JavaScript for Filtering Providers and Modal -->
     <script>
         function filterProviders() {
             const selectedLocation = document.getElementById('locationFilter').value.toLowerCase();
@@ -95,7 +125,46 @@
 
             noResults.style.display = hasVisibleProviders ? 'none' : 'block';
         }
-    </script>
 
+        async function showCharges(providerId) {
+            const modal = document.getElementById('chargesModal');
+            const chargesElement = document.getElementById('modalCharges');
+            
+            // Show modal with loading state
+            modal.style.display = 'flex';
+            chargesElement.textContent = 'Loading...';
+            
+            try {
+                // Fetch charges from the server
+                const response = await fetch(`/view-charges/${providerId}`);
+                const charge = await response.text();
+                
+                // Update modal with charges
+                if (charge.startsWith('Error:') || charge === 'Charges not available') {
+                    chargesElement.textContent = charge;
+                    chargesElement.classList.add('text-red-600');
+                } else {
+                    chargesElement.textContent = '₹' + charge + '/hr';
+                    chargesElement.classList.remove('text-red-600');
+                }
+            } catch (error) {
+                chargesElement.textContent = 'Error loading charges';
+                chargesElement.classList.add('text-red-600');
+            }
+        }
+
+        function closeChargesModal() {
+            const modal = document.getElementById('chargesModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('chargesModal');
+            if (event.target === modal) {
+                closeChargesModal();
+            }
+        }
+    </script>
 </body>
 </html>

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpSession;
@@ -602,5 +603,30 @@ public class ServiceProviderController {
     @GetMapping("/test-payment")
     public String handleTestPayment() {
         return "payment-success";
+    }
+
+    @GetMapping("/view-charges/{providerId}")
+    @ResponseBody
+    public String viewCharges(@PathVariable Long providerId, HttpSession session) {
+        try {
+            // Get subcategory ID from session
+            Long subcategoryId = (Long) session.getAttribute("subId");
+            if (subcategoryId == null) {
+                return "Error: Subcategory not found";
+            }
+
+            // Find charge for this provider and subcategory
+            ServiceProviderCharge charge = serviceProviderChargeRepository.findByServiceProviderIdAndSubcategoryId(
+                providerId, subcategoryId);
+
+            if (charge == null) {
+                return "Charges not available";
+            }
+
+            // Format charge as string with 2 decimal places
+            return String.format("%.2f", charge.getChargePerHour());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 }
