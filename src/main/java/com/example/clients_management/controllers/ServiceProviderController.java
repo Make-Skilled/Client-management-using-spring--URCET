@@ -451,4 +451,103 @@ public class ServiceProviderController {
         model.addAttribute("provider", provider);
         return "book-service";
     }
+
+    @GetMapping("/booking-requests")
+    public String bookingRequests(Model model, HttpSession session) {
+
+        // Get all bookings
+        List<Bookings> bookings = bookingsRepository.findAll();
+
+        // Get all service providers for forwarding
+        List<ServiceProviderDetails> serviceProviders = serviceProviderRepository.findAll();
+
+        model.addAttribute("bookings", bookings);
+        model.addAttribute("serviceProviders", serviceProviders);
+        return "booking-requests";
+    }
+
+    @GetMapping("/forward-booking/{id}")
+    public String forwardBooking(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Get the booking
+            Bookings booking = bookingsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            // Get the service provider from the booking
+            ServiceProviderDetails provider = serviceProviderRepository.findById(booking.getServiceProviderId())
+                .orElseThrow(() -> new RuntimeException("Service provider not found"));
+
+            // Get the client
+            // ClientDetails client = clientRepository.findByEmail(booking.getBookedBy());
+            // if (client == null) {
+            //     throw new RuntimeException("Client not found");
+            // }
+
+            // Update booking status
+            booking.setStatus("FORWARDED");
+            bookingsRepository.save(booking);
+
+            // Send notification email to provider
+            String providerMessage = String.format(
+                "A new request has been forwarded to you\n" +
+                "Client: %s\n" +
+                "Date: %s\n" +
+                "Time: %s\n" +
+                "Contact: %s\n" +
+                "Address: %s",
+                booking.getBookedBy(),
+                booking.getDate(),
+                booking.getTime(),
+                booking.getPhone(),
+                booking.getAddress()
+            );
+            emailService.sendEmail(provider.getEmail(), "New Forwarded Booking Request", providerMessage);
+
+            // Send notification email to client
+            String clientMessage = "Your request is forwarded to the service provider and he will contact you shortly";
+            emailService.sendEmail(booking.getBookedBy(), "Booking Request Forwarded", clientMessage);
+
+            redirectAttributes.addFlashAttribute("success", "Booking has been forwarded successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to forward booking: " + e.getMessage());
+        }
+
+        return "redirect:/booking-requests";
+    }
+
+    @GetMapping("/reject-booking/{id}")
+    public String rejectBooking(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Get the booking
+            Bookings booking = bookingsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            // Get the client
+            // ClientDetails client = clientRepository.findByEmail(booking.getBookedBy());
+            // if (client == null) {
+            //     throw new RuntimeException("Client not found");
+            // }
+
+            // Update booking status
+            booking.setStatus("REJECTED");
+            bookingsRepository.save(booking);
+
+            // Send notification email to client
+            String message = String.format(
+                "Your booking request has been rejected.\n" +
+                "Date: %s\n" +
+                "Time: %s\n" +
+                "You can try booking with another service provider.",
+                booking.getDate(),
+                booking.getTime()
+            );
+            emailService.sendEmail(booking.getBookedBy(), "Booking Request Rejected", message);
+
+            redirectAttributes.addFlashAttribute("success", "Booking has been rejected successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to reject booking: " + e.getMessage());
+        }
+
+        return "redirect:/booking-requests";
+    }
 }

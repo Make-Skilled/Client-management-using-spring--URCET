@@ -22,9 +22,13 @@
                         <a href="/serviceproviderdashboard" class="text-white text-xl font-bold">Service Provider Dashboard</a>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-6">
+                    <a href="/mybookings" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">My Bookings</a>
+                    <a href="/booking-requests" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Booking Requests</a>
+                    <a href="/acceptedbookings" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Accepted Bookings</a>
+                    <a href="/profile" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Profile</a>
                     <span class="text-white" th:text="${'Welcome, ' + session.name}"></span>
-                    <a href="/serviceproviderlogout" class="text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                    <a href="/serviceproviderlogout" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm font-medium">Logout</a>
                 </div>
             </div>
         </div>

@@ -47,6 +47,9 @@ import jakarta.servlet.http.HttpSession;
 public class ClientController {
 
 	@Autowired
+	private EmailService emailService;
+
+	@Autowired
 	EmailService emailservice;
 
 	@Autowired
@@ -72,7 +75,9 @@ public class ClientController {
 
 	@Autowired
 	private SubcategoryService subcategoryService;
-	
+
+	@Autowired
+	private ServiceProviderRepository serviceProviderRepository;
 
 	@GetMapping("/")
 	public String land(HttpSession session, Model model) {
@@ -549,5 +554,52 @@ public String createBooking(
     return "redirect:/client/mybookings"; // Always redirect to "mybookings"
 }
 
+	@PostMapping("/complete-booking/{id}")
+    public String completeBooking(@PathVariable Long id, 
+                                @RequestParam Integer rating,
+                                @RequestParam(required = false) String feedback,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            // Get the booking
+            Bookings booking = bookingsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            // Get the service provider
+            ServiceProviderDetails provider = serviceProviderRepository.findById(booking.getServiceProviderId())
+                .orElseThrow(() -> new RuntimeException("Service provider not found"));
+
+            // Update booking status
+            booking.setStatus("COMPLETED");
+            bookingsRepository.save(booking);
+
+            // Update provider's average rating
+            Double currentAvgRating = provider.getAvgRating() != null ? provider.getAvgRating() : 0.0;
+            Integer currentNumRatings = provider.getNumberOfRatings() != null ? provider.getNumberOfRatings() : 0;
+
+            // Calculate new average rating
+            currentNumRatings++;
+            double newAvgRating = ((currentAvgRating * (currentNumRatings - 1)) + rating) / currentNumRatings;
+
+            provider.setAvgRating(newAvgRating);
+            provider.setNumberOfRatings(currentNumRatings);
+            serviceProviderRepository.save(provider);
+
+            // Send thank you email to client
+            String message = String.format(
+                "Thank you for using our service!\n" +
+                "We appreciate your feedback and rating of %d stars.\n" +
+                "Looking forward to serving you again!",
+                rating
+            );
+            emailService.sendEmail(booking.getBookedBy(), "Booking Completed - Thank You!", message);
+
+            redirectAttributes.addFlashAttribute("success", "Booking completed and rating submitted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to complete booking: " + e.getMessage());
+        }
+
+        return "redirect:/client/mybookings";
+    }
 	
 }
